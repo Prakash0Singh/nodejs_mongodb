@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { ServerApiVersion } = require('mongodb');
 const Product = require('../models/product')
 
-const mongoURI = 'mongodb+srv://demouser:RaBN6WDrQ43w91pS@nodejs.qpgiiwr.mongodb.net/nodejs?retryWrites=true&w=majority&appName=nodejs';
+const mongoURI = '';
 
 
 const mongoConnect = callback => {
