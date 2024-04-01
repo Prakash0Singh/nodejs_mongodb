@@ -1,0 +1,23 @@
+[
+    {
+        "title": "Magic",
+        "imageUrl": "https://m.media-amazon.com/images/I/5177eLEs+YL._SY445_SX342_.jpg",
+        "description": "Simple Magic Price",
+        "price": "23",
+        "id": "0.5398906673544719"
+    },
+    {
+        "title": "Book",
+        "imageUrl": "https://m.media-amazon.com/images/I/61jCkOVf1oL._AC_UY327_FMwebp_QL65_.jpg",
+        "description": "Collection Of Books @30 ",
+        "price": "30",
+        "id": "0.23579423571165292"
+    },
+    {
+        "title": "Clock",
+        "imageUrl": "https://m.media-amazon.com/images/I/91ymgVRWUrL._AC_UF1000,1000_QL80_.jpg",
+        "description": "A simple wall clock image to for showcase and for simply display this message as well",
+        "price": "90",
+        "id": "0.7669316069669052"
+    }
+]
