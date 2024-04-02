@@ -43,7 +43,7 @@ exports.getProducts = (req, res, next) => {
 
 exports.getEditProduct = (req, res, next) => {
   const prodId = req.params.productId;
-  Product.findByPk(prodId)
+  Product.findById(prodId)
     .then((product) => {
       res.status(200).send(
         {
@@ -65,22 +65,16 @@ exports.getEditProduct = (req, res, next) => {
 };
 
 exports.postEditProduct = (req, res, next) => {
-  const prodId = req.params.productId;
-  const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
-  const price = req.body.price;
-  const description = req.body.description;
+  const _id = req.params.productId;
+  const { title, imageUrl, price, description } = req.body;
 
-  Product.findByPk(prodId)
-    .then((product) => {
-      product.title = title,
-        product.image = imageUrl,
-        product.price = price,
-        product.description = description;
-      return product.save();
-    })
+  Product.findByIdAndUpdate({ _id }, {
+    title: title,
+    image: imageUrl,
+    price: price,
+    description: description
+  })
     .then((updated) => {
-      // res.redirect('/');
       res.status(200).send({
         status: true,
         data: updated,
@@ -101,11 +95,7 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.params.productId;
-  Product.destroy({
-    where: {
-      id: prodId
-    },
-  })
+  Product.deleteOne({ _id: prodId })
     .then((updated) => {
       res.status(200).send({
         status: true,

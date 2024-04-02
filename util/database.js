@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { ServerApiVersion } = require('mongodb');
-const Product = require('../models/product')
+const Product = require('../models/product');
+const User = require('../models/user');
 
 const mongoURI = '';
 
@@ -37,16 +38,13 @@ const mongoConnect = callback => {
     console.error('MongoDB connection error:', error);
   });
 
-  db.once('open', () => {
-    Product.createCollection()
-      .then(() => {
-        console.log('Collection created');
-      })
-      .catch((error) => {
-        console.error('Error creating collection:', error);
-      });
-
-    console.log('Connected to MongoDB');
+  db.once('open', async () => {
+    try {
+      await Product.createCollection();
+      await User.createCollection();
+    } catch (error) {
+      console.error('Error creating collection:', error);
+    }
   });
 
   db.on('disconnected', () => {
