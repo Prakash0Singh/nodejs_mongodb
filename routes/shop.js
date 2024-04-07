@@ -12,15 +12,15 @@ router.get('/products', getProducts);
 
 router.get('/products/:productId', getProduct);
 
-// router.get('/cart', getCart);
+router.get('/cart', getCart);
 
-// router.post('/add-cart/:productId', postCart)
+router.post('/add-cart/:productId', postCart)
 
-// router.post('/delete/:productId', postRemoveCart)
+router.post('/remove-cart/:productId', postRemoveCart)
 
-// router.post('/create-order', postOrder)
+router.post('/create-order', postOrder)
 
-// router.get('/orders', getOrders);
+router.get('/orders', getOrders);
 
 // router.get('/checkout', getCheckout);
 

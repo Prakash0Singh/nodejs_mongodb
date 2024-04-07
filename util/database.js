@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const { ServerApiVersion } = require('mongodb');
 const Product = require('../models/product');
 const User = require('../models/user');
-
 const mongoURI = '';
 
 
@@ -31,26 +30,6 @@ const mongoConnect = callback => {
         console.error('An unexpected error occurred:', error);
       }
     });
-
-  const db = mongoose.connection;
-
-  db.on('error', (error) => {
-    console.error('MongoDB connection error:', error);
-  });
-
-  db.once('open', async () => {
-    try {
-      await Product.createCollection();
-      await User.createCollection();
-    } catch (error) {
-      console.error('Error creating collection:', error);
-    }
-  });
-
-  db.on('disconnected', () => {
-    console.log('Disconnected from MongoDB');
-  });
-
 }
 
 module.exports = mongoConnect;

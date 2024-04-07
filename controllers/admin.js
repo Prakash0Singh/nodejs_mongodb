@@ -1,8 +1,9 @@
 const Product = require('../models/product');
 
 exports.postAddProduct = (req, res, next) => {
+
   const { title, imageUrl, price, description } = req.body;
-  Product.create({ title: title, image: imageUrl, price: price, description: description })
+  Product.create({ title: title, image: imageUrl, price: price, description: description, userid: req.user })
     .then(() => {
       res.status(200).send({
         status: true,
@@ -21,7 +22,9 @@ exports.postAddProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.find({})
+  Product.find()
+    .select('title price image')
+    // .populate('userid', 'name')
     .then((product) => {
       res.status(200).send(
         {

@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const Order = require('../models/order')
 
 exports.getProducts = (req, res, next) => {
   Product.find({})
@@ -20,7 +21,6 @@ exports.getProducts = (req, res, next) => {
       console.log(err)
     });
 };
-
 
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
@@ -67,63 +67,37 @@ exports.getIndex = (req, res, next) => {
 }
 
 exports.getCart = (req, res, next) => {
-  req.user.getCart()
-    .then((cart) => {
-      return cart.getProducts()
-        .then(product => {
-          res.status(200).send(
-            {
-              status: true,
-              data: product,
-              message: 'successfully get cartdata'
-            });
-        })
-        .catch(err => {
-          res.status(200).send(
-            {
-              status: false,
-              message: err
-            }
-          )
-          console.log(err)
-        })
-    })
-    .catch(error => {
-      console.log(error)
-    })
-};
-
-exports.postCart = (req, res, next) => {
-  const productId = req.params.productId;
-  let newQuantity = 1
-  let fetchCart;
-  req.user.getCart()
-    .then(cart => {
-      fetchCart = cart
-      return cart.getProducts({ where: { id: productId } })
-    })
-    .then(product => {
-      let produ
-      if (product.length > 0) {
-        produ = product[0]
-      }
-
-      if (produ) {
-        const oldquntity = produ.cartItem.quantity;
-        newQuantity = oldquntity + 1;
-        return product;
-      }
-      return Product.findByPk(productId)
-    })
-    .then(product => {
-      return fetchCart.addProduct(product, { through: { quantity: newQuantity } })
-    })
+  req.user.populate('cart.items.productID')
     .then(product => {
       res.status(200).send(
         {
           status: true,
-          data: product,
+          data: product.cart.items,
           message: 'successfully get cartdata'
+        });
+    })
+    .catch(err => {
+      res.status(200).send(
+        {
+          status: false,
+          message: err
+        }
+      )
+      console.log(err)
+    })
+};
+
+exports.postCart = async (req, res, next) => {
+  const productId = req.params.productId;
+  Product.findById(productId)
+    .then(product => {
+      return req.user.addToCart(product)
+    })
+    .then(result => {
+      res.status(200).send(
+        {
+          status: true,
+          message: 'successfully added to cart'
         });
     })
     .catch(err => {
@@ -139,14 +113,7 @@ exports.postCart = (req, res, next) => {
 
 exports.postRemoveCart = (req, res, next) => {
   const productId = req.params.productId;
-  req.user.getCart()
-    .then(cart => {
-      return cart.getProducts({ where: { id: productId } })
-    })
-    .then(products => {
-      const product = products[0]
-      return product.cartItem.destroy()
-    })
+  req.user.removeFromCart(productId)
     .then(result => {
       res.status(200).send(
         {
@@ -167,29 +134,26 @@ exports.postRemoveCart = (req, res, next) => {
 }
 
 exports.postOrder = (req, res, next) => {
-  let fetchedCart;
-  req.user.getCart()
-    .then(cart => {
-      fetchedCart = cart
-      return cart.getProducts()
-    })
-    .then(products => {
-      return req.user.createOrder()
-        .then(order => {
-          return order.addProducts(products.map(data => { data.orderItem = { quantity: data.cartItem.quantity }; return data }))
+  req.user.populate('cart.items.productID')
+    .then(user => {
+      const products = user.cart.items.map(i => {
+        return { quantity: i.quantity, product: { ...i.productID._doc } }
+      });
+      const order = new Order(
+        {
+          products: products,
+          user: { name: req.user.name, userId: req.user }
         })
-        .catch(err => { console.log(err) })
+      return order.save();
     })
     .then(result => {
-      return fetchedCart.setProducts(null)
-
+      return req.user.clearCart()
     })
-    .then(result => {
+    .then(data => {
       res.status(200).send(
         {
           status: true,
-          data: result,
-          message: 'successfully added to orderlist'
+          message: 'successfully Order cart-items'
         });
     })
     .catch(err => {
@@ -204,7 +168,7 @@ exports.postOrder = (req, res, next) => {
 }
 
 exports.getOrders = (req, res, next) => {
-  req.user.getOrders({ include: ['products'] })
+  Order.find({ 'user.userId': req.user._id })
     .then(order => {
       res.status(200).send(
         {
