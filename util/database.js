@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 const { ServerApiVersion } = require('mongodb');
-const Product = require('../models/product');
-const User = require('../models/user');
 const mongoURI = '';
 
 

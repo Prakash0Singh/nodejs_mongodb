@@ -4,7 +4,7 @@ const Order = require('../models/order')
 exports.getProducts = (req, res, next) => {
   Product.find({})
     .then((product) => {
-      res.status(200).send(
+      res.status(200).json(
         {
           status: true,
           data: product,
@@ -12,7 +12,7 @@ exports.getProducts = (req, res, next) => {
         });
     })
     .catch((err) => {
-      res.status(200).send(
+      res.status(200).json(
         {
           status: false,
           message: err
@@ -26,7 +26,7 @@ exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
   Product.findById(prodId)
     .then((product) => {
-      res.status(200).send(
+      res.status(200).json(
         {
           status: true,
           data: product,
@@ -34,7 +34,7 @@ exports.getProduct = (req, res, next) => {
         });
     })
     .catch((err) => {
-      res.status(200).send(
+      res.status(200).json(
         {
           status: false,
           message: err
@@ -56,7 +56,7 @@ exports.getIndex = (req, res, next) => {
       });
     })
     .catch(err => {
-      res.status(200).send(
+      res.status(200).json(
         {
           status: false,
           message: err
@@ -69,7 +69,7 @@ exports.getIndex = (req, res, next) => {
 exports.getCart = (req, res, next) => {
   req.user.populate('cart.items.productID')
     .then(product => {
-      res.status(200).send(
+      res.status(200).json(
         {
           status: true,
           data: product.cart.items,
@@ -77,7 +77,7 @@ exports.getCart = (req, res, next) => {
         });
     })
     .catch(err => {
-      res.status(200).send(
+      res.status(200).json(
         {
           status: false,
           message: err
@@ -94,14 +94,14 @@ exports.postCart = async (req, res, next) => {
       return req.user.addToCart(product)
     })
     .then(result => {
-      res.status(200).send(
+      res.status(200).json(
         {
           status: true,
           message: 'successfully added to cart'
         });
     })
     .catch(err => {
-      res.status(200).send(
+      res.status(200).json(
         {
           status: false,
           message: err
@@ -115,7 +115,7 @@ exports.postRemoveCart = (req, res, next) => {
   const productId = req.params.productId;
   req.user.removeFromCart(productId)
     .then(result => {
-      res.status(200).send(
+      res.status(200).json(
         {
           status: true,
           data: result,
@@ -123,7 +123,7 @@ exports.postRemoveCart = (req, res, next) => {
         });
     })
     .catch(err => {
-      res.status(200).send(
+      res.status(200).json(
         {
           status: false,
           message: err
@@ -150,14 +150,14 @@ exports.postOrder = (req, res, next) => {
       return req.user.clearCart()
     })
     .then(data => {
-      res.status(200).send(
+      res.status(200).json(
         {
           status: true,
           message: 'successfully Order cart-items'
         });
     })
     .catch(err => {
-      res.status(200).send(
+      res.status(200).json(
         {
           status: false,
           message: err
@@ -170,7 +170,7 @@ exports.postOrder = (req, res, next) => {
 exports.getOrders = (req, res, next) => {
   Order.find({ 'user.userId': req.user._id })
     .then(order => {
-      res.status(200).send(
+      res.status(200).json(
         {
           status: true,
           data: order,
@@ -178,7 +178,7 @@ exports.getOrders = (req, res, next) => {
         });
     })
     .catch(err => {
-      res.status(200).send(
+      res.status(200).json(
         {
           status: false,
           message: err
